@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>李默养鸡场</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background-color: #f0f8ff; 
+            position: relative;
+        }
+        #game-container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+        .status-bar { 
+            background-color: #fff; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        button { 
+            padding: 10px 20px; 
+            margin: 5px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            transition: transform 0.1s;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .shop-item { 
+            background-color: white; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+        }
+        .special { 
+            color: #ff4500; 
+            font-weight: bold; 
+        }
+        #cheatMenu { 
+            display: none; 
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.3); 
+            z-index: 999; 
+        }
+        .cheat-btn { 
+            margin: 5px; 
+            background-color: #ff69b4;
+            color: white;
+        }
+        .save-section { 
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .hidden-feature {
+            background-color: gold;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>李默传奇养鸡场 🐓</h1>
+
+        <div class="status-bar">
+            <h3>当前状态</h3>
+            <p>🐔 普通鸡: <span id="normalChicken">0</span></p>
+            <p>🌟 李默鸡: <span id="liMoChicken">0</span></p>
+            <p>🥚 普通蛋: <span id="normalEgg">0</span></p>
+            <p>🥇 金蛋: <span id="goldenEgg">0</span></p>
+            <p>💰 金币: <span id="money">1000</span></p>
+            <p>🏠 鸡舍等级: <span id="coopLevel">1</span></p>
+        </div>
+
+        <div class="actions">
+            <div class="shop-item">
+                <h3>自动繁殖</h3>
+                <p>每5秒自动获得<span id="autoChicken">1</span>只鸡</p>
+                <button onclick="sellChicken()" style="background-color:#ff6347">卖出普通鸡 (500💰)</button>
+                <button onclick="sellLiMoChicken()" class="special">卖出李默鸡 (5000万💰)</button>
+            </div>
+
+            <div class="shop-item">
+                <h3>蛋类操作</h3>
+                <button onclick="sellEgg()" style="background-color:#ffd700">立即卖出所有蛋 (5💰/个)</button>
+                <button onclick="sellGoldenEgg()" class="special">卖出金蛋 (50000💰/个)</button>
+            </div>
+
+            <div class="shop-item">
+                <h3>设施升级</h3>
+                <p>升级鸡舍 (当前效果: +<span id="coopEffect">10</span>%生产效率)</p>
+                <button onclick="upgradeCoop()" style="background-color:#32cd32">升级需要: <span id="upgradeCost">1000</span>💰</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 独立存档系统 -->
+    <div class="save-section">
+        <h4>存档管理 💾</h4>
+        <button onclick="exportSave()">导出存档</button>
+        <button onclick="importSave()">导入存档</button>
+        <input type="file" id="importFile" style="display:none;">
+    </div>
+
+    <!-- 增强版作弊菜单 -->
+    <div id="cheatMenu">
+        <h3>超级作弊菜单 🕹️</h3>
+        <button class="cheat-btn" onclick="addMoney()">+500万金币</button>
+        <button class="cheat-btn" onclick="addChickens()">+10万普通鸡</button>
+        <button class="cheat-btn" onclick="addLiMoChickens()">+10万李默鸡</button>
+        <button class="cheat-btn" onclick="hatchAllEggs()">立即孵化所有蛋</button>
+        <button class="cheat-btn" onclick="upgradeCoopCheat()">鸡舍等级+10</button>
+        <button class="cheat-btn hidden-feature" onclick="unlockGodMode()">上帝模式</button>
+        <button class="cheat-btn" onclick="toggleInfiniteMoney()">无限金币</button>
+        <button class="cheat-btn" onclick="maxUpgrade()">立即满级</button>
+    </div>
+
+<script>
+// 游戏数据
+let game = {
+    version: "2.0",
+    money: 1000,
+    normalChickens: 0,
+    liMoChickens: 0,
+    normalEggs: [],
+    goldenEggs: 0,
+    coopLevel: 1,
+    autoProduction: 1,
+    godMode: false,
+    infiniteMoney: false
+};
+
+// 生产系统
+const productionInterval = setInterval(() => {
+    game.normalChickens += game.autoProduction;
+    game.normalEggs.push(...Array(game.normalChickens).fill(Date.now()));
+    game.goldenEggs += Math.floor(game.liMoChickens * 0.1 * game.coopLevel);
+    updateDisplay();
+}, 5000);
+
+// 更新显示
+function updateDisplay() {
+    document.getElementById('normalChicken').textContent = game.normalChickens;
+    document.getElementById('liMoChicken').textContent = game.liMoChickens;
+    document.getElementById('normalEgg').textContent = game.normalEggs.length;
+    document.getElementById('goldenEgg').textContent = game.goldenEggs;
+    document.getElementById('money').textContent = game.money;
+    document.getElementById('coopLevel').textContent = game.coopLevel;
+    document.getElementById('autoChicken').textContent = game.autoProduction;
+    document.getElementById('upgradeCost').textContent = 1000 * Math.pow(2, game.coopLevel);
+    document.getElementById('coopEffect').textContent = game.coopLevel * 10;
+}
+
+// 鸡蛋孵化系统
+setInterval(() => {
+    const now = Date.now();
+    game.normalEggs = game.normalEggs.filter(timestamp => {
+        if (now - timestamp > 60000) {
+            const rand = Math.random();
+            if (rand < 0.01) game.liMoChickens++;
+            else if (rand < 0.5) game.normalChickens++;
+            return false;
+        }
+        return true;
+    });
+    updateDisplay();
+}, 1000);
+
+// 金蛋生产系统
+setInterval(() => {
+    game.goldenEggs += game.liMoChickens;
+    updateDisplay();
+}, 10000);
+
+// 操作系统
+function sellChicken() {
+    if(game.normalChickens > 0) {
+        game.money += game.normalChickens * 500;
+        game.normalChickens = 0;
+        updateDisplay();
+    }
+}
+
+function sellLiMoChicken() {
+    if(game.liMoChickens > 0) {
+        game.money += game.liMoChickens * 50000000;
+        game.liMoChickens = 0;
+        updateDisplay();
+    }
+}
+
+function sellEgg() {
+    const total = game.normalEggs.length * 5;
+    game.money += total;
+    game.normalEggs = [];
+    updateDisplay();
+}
+
+function sellGoldenEgg() {
+    game.money += game.goldenEggs * 50000;
+    game.goldenEggs = 0;
+    updateDisplay();
+}
+
+function upgradeCoop() {
+    const cost = 1000 * Math.pow(2, game.coopLevel);
+    if(game.money >= cost || game.infiniteMoney) {
+        if(!game.infiniteMoney) game.money -= cost;
+        game.coopLevel++;
+        game.autoProduction = Math.floor(game.coopLevel * 1.5);
+        updateDisplay();
+    } else {
+        alert("金币不足！");
+    }
+}
+
+// 增强作弊系统
+const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let inputSequence = [];
+
+document.addEventListener('keydown', (e) => {
+    inputSequence.push(e.key);
+    if(inputSequence.length > konamiCode.length) inputSequence.shift();
+    if(JSON.stringify(inputSequence) === JSON.stringify(konamiCode)) {
+        const code = prompt('请输入终极作弊码：');
+        if(code === '114514') {
+            document.getElementById('cheatMenu').style.display = 'block';
+            unlockSecretFeature();
+        }
+    }
+});
+
+// 新增作弊功能
+function addMoney() {
+    game.money += 5000000;
+    updateDisplay();
+}
+
+function addChickens() {
+    game.normalChickens += 100000;
+    updateDisplay();
+}
+
+function addLiMoChickens() {
+    game.liMoChickens += 100000;
+    updateDisplay();
+}
+
+function hatchAllEggs() {
+    game.normalEggs.forEach(() => {
+        Math.random() < 0.01 ? game.liMoChickens++ : 
+        Math.random() < 0.5 ? game.normalChickens++ : null;
+    });
+    game.normalEggs = [];
+    updateDisplay();
+}
+
+function upgradeCoopCheat() {
+    game.coopLevel += 10;
+    game.autoProduction = Math.floor(game.coopLevel * 1.5);
+    updateDisplay();
+}
+
+function toggleInfiniteMoney() {
+    game.infiniteMoney = !game.infiniteMoney;
+    alert(`无限金币模式：${game.infiniteMoney ? '开启' : '关闭'}`);
+}
+
+function maxUpgrade() {
+    game.coopLevel = 100;
+    game.autoProduction = 150;
+    updateDisplay();
+}
+
+function unlockGodMode() {
+    game.godMode = true;
+    game.money = Infinity;
+    game.normalChickens = 999999;
+    game.liMoChickens = 999999;
+    updateDisplay();
+    alert("上帝模式已激活！");
+}
+
+function unlockSecretFeature() {
+    document.querySelectorAll('button').forEach(btn => {
+        btn.style.animation = 'glow 1s infinite alternate';
+    });
+    alert("隐藏特效已解锁！");
+}
+
+// 存档系统
+function exportSave() {
+    const saveData = btoa(JSON.stringify(game));
+    const blob = new Blob([saveData], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `limo_farm_${Date.now()}.save`;
+    a.click();
+    alert('存档已导出！');
+}
+
+function importSave() {
+    document.getElementById('importFile').click();
+}
+
+document.getElementById('importFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const saveData = JSON.parse(atob(e.target.result));
+            if(saveData.version !== game.version && !confirm('版本不兼容，继续加载？')) return;
+            Object.assign(game, saveData);
+            updateDisplay();
+            alert('存档加载成功！');
+        } catch {
+            alert('无效存档文件！');
+        }
+    };
+    reader.readAsText(file);
+});
+
+// 初始化
+updateDisplay();
+</script>
+</body>
+</html>
