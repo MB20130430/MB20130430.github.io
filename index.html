@@ -41,5 +41,50 @@
         <a href="https://www.bilibili.com/" target="top">bilibili</a>
         <a href="https://img.xwyue.com/i/2025/03/23/67dfa730cd82b.gif" target="top">老头</a>
         <a href="https://www.cntodesk.com/windows/" target="top">远控软件</a>
-        <a href="https://i-986.wwentua.com:446/04282200234828389bb/2025/04/28/5992e87bcbbb85e11c35241b3fe68bcf.pptx?st=_F2QacGC2a4rabA74tFqJg&e=1745851909&b=BrJexlLYWblSql6fBbAEhQb_bWeAGvlTmA7RY71XeV3tRc1wsAXUCfw_c_c&fi=234828389&pid=121-29-166-231&up=2&mp=0&co=0" target="top">六二ppt</a>
-        <a href="https://i-682.wwentua.com:446/04282200234828386bb/2025/04/28/6186bdcb5e2ea05b3f082b06194176ce.pptx?st=VpGbeoa-a3lZ5_pfoowPQA&e=1745851726&b=VO9a8QWdBeYDzlOPVuNV_aAXHAHJUJQt9BCMKfw_c_c&fi=234828386&pid=121-29-166-231&up=2&mp=0&co=0" target="top">六年一</a>  
+<div id="bing-search" style="margin-top: 20px;">
+    <input type="text" id="bingKeyword" placeholder="输入关键词进行搜索" style="padding: 8px; width: 70%;">
+    <button id="startSearch" style="padding: 8px 15px; background: #0066cc; color: white; border: none; cursor: pointer;">搜索</button>
+    <div id="countdownSection" style="display: none; margin-top: 10px;">
+        <p>将在 <span id="countdown">5</span> 秒后跳转到Bing搜索</p>
+        <button id="stopSearch" style="padding: 5px 10px; background: #cc0000; color: white; border: none; cursor: pointer; margin-top: 5px;">停止跳转</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('startSearch').addEventListener('click', function() {
+        var keyword = document.getElementById('bingKeyword').value.trim();
+        if (!keyword) {
+            alert('请输入搜索关键词');
+            return;
+        }
+        
+        var countdownSection = document.getElementById('countdownSection');
+        var countdownDisplay = document.getElementById('countdown');
+        countdownSection.style.display = 'block';
+        
+        var secondsLeft = 5;
+        countdownDisplay.textContent = secondsLeft;
+        
+        var countdownTimer = setInterval(function() {
+            secondsLeft--;
+            countdownDisplay.textContent = secondsLeft;
+            
+            if (secondsLeft <= 0) {
+                clearInterval(countdownTimer);
+                window.location.href = 'https://cn.bing.com/search?q=' + encodeURIComponent(keyword);
+            }
+        }, 1000);
+        
+        document.getElementById('stopSearch').onclick = function() {
+            clearInterval(countdownTimer);
+            countdownSection.style.display = 'none';
+        };
+    });
+    
+    // 支持按回车键搜索
+    document.getElementById('bingKeyword').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('startSearch').click();
+        }
+    });
+</script>
