@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>烤肠队 - 官方网站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* 白天模式变量 */
+            --primary-color: #4a6fa5;
+            --secondary-color: #6b8cbc;
+            --accent-color: #ff6b6b;
+            --bg-color: #f9f9f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --header-bg: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-color: #eeeeee;
+            --gradient: linear-gradient(135deg, #4a6fa5 0%, #6b8cbc 100%);
+        }
+
+        .dark-mode {
+            /* 黑夜模式变量 */
+            --primary-color: #6b8cbc;
+            --secondary-color: #4a6fa5;
+            --accent-color: #ff8e8e;
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #f0f0f0;
+            --header-bg: #2d2d2d;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --border-color: #444444;
+            --gradient: linear-gradient(135deg, #2d2d2d 0%, #4a6fa5 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--text-color);
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode .theme-toggle {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+            background: var(--gradient);
+            color: white;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 50px;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: white;
+            color: var(--primary-color);
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .member-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            text-align: center;
+        }
+
+        .member-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .member-icon {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: white;
+            position: relative;
+        }
+
+        .member-icon:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            opacity: 0.8;
+            z-index: -1;
+        }
+
+        .member-info {
+            padding: 25px 20px;
+        }
+
+        .member-name {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .member-code {
+            font-size: 1rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-weight: 600;
+            background-color: rgba(255, 107, 107, 0.1);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .member-desc {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .about-section {
+            padding: 80px 0;
+            background-color: var(--card-bg);
+            border-radius: 30px;
+            margin-bottom: 80px;
+            box-shadow: var(--shadow);
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-content p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .value-item {
+            text-align: center;
+            padding: 30px 20px;
+            background-color: var(--bg-color);
+            border-radius: 15px;
+            transition: transform 0.3s;
+        }
+
+        .value-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .value-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .value-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        footer {
+            background-color: var(--header-bg);
+            padding: 50px 0 30px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .social-links {
+            display: flex;
+            margin: 30px 0;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: white;
+            margin: 0 12px;
+            text-decoration: none;
+            transition: transform 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            transform: scale(1.1);
+        }
+
+        .copyright {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .modal-content p {
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* 移动设备样式 */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            .nav-links {
+                margin-top: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links li {
+                margin: 5px 10px;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-users"></i>
+                    <span>烤肠队</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">首页</a></li>
+                    <li><a href="#team">团队成员</a></li>
+                    <li><a href="#about">关于我们</a></li>
+                    <li><a href="#contact">联系我们</a></li>
+                </ul>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>欢迎来到烤肠队官方网站</h1>
+            <p>我们是一支独特的团队，每个成员都有自己专属的烤肠代号，代表着我们不同的个性与专长。</p>
+            <a href="#team" class="btn">了解团队成员</a>
+        </div>
+    </section>
+
+    <section class="container" id="team">
+        <h2 class="section-title">团队成员</h2>
+        <div class="team-grid">
+            <!-- 高昊宇 -->
+            <div class="member-card">
+                <div class="member-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">高昊宇</h3>
+                    <div class="member-code">代号：黄金脆皮烤肠</div>
+                    <p class="member-desc">网站作者。</p>
+                </div>
+            </div>
+            
+            <!-- 张梓龙 -->
+            <div class="member-card">
+                <div class="member-icon">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">张梓龙</h3>
+                    <div class="member-code">代号：火山岩烤肠（队长）</div>
+                    <p class="member-desc">666这个入是皮龙。</p>
+                </div>
+            </div>
+            
+            <!-- 李天佑 -->
+            <div class="member-card">
+                <div class="member-icon">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">李天佑</h3>
+                    <div class="member-code">代号：脆骨肠</div>
+                    <p class="member-desc">手里捧着窝窝头，我就是大姚。</p>
+                </div>
+            </div>
+            
+            <!-- 周沫涵 -->
+            <div class="member-card">
+                <div class="member-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">周沫涵</h3>
+                    <div class="member-code">代号：王中王</div>
+                    <p class="member-desc">众所周知。</p>
+                </div>
+            </div>
+            
+            <!-- 徐子轩 -->
+            <div class="member-card">
+                <div class="member-icon">
+                    <i class="fas fa-question"></i>
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">徐子轩</h3>
+                    <div class="member-code">代号：佩奇肠</div>
+                    <p class="member-desc">哦哦哦哦哦哦佩奇。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="about-content">
+                <h2 class="section-title">关于烤肠队</h2>
+                <p>烤肠队成立于2025年。然后。我喜欢你</p>
+                
+                <div class="values-grid">
+                    <div class="value-item">
+                        <div class="value-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3 class="value-title">团队合作</h3>
+                        <p>一起吃烤肠。</p>
+                    </div>
+                    <div class="value-item">
+                        <div class="value-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3 class="value-title">创新思维</h3>
+                        <p>曾创下第一个在黑市卖烤肠的成就。</p>
+                    </div>
+                    <div class="value-item">
+                        <div class="value-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3 class="value-title">追求卓越</h3>
+                        <p>打地铁枪只追求卓越。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <h3>烤肠队</h3>
+                <p>独特的烤肠</p>
+                <div class="social-links">
+                    <a href="#" id="weixin-link"><i class="fab fa-weixin"></i></a>
+                    <a href="#" id="weibo-link"><i class="fab fa-weibo"></i></a>
+                    <a href="http://wpa.qq.com/msgrd?v=3&uin=3680112538&site=qq&menu=yes" id="qq-link"><i class="fab fa-qq"></i></a>
+                    <a href="#" id="email-link"><i class="fas fa-envelope"></i></a>
+                </div>
+                <p class="copyright">© 2025 烤肠队 版权所有 | 代号系统让团队更有趣</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 弹窗 -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h3>提示</h3>
+            <p id="modal-text">暂无awa</p>
+            <button class="modal-close" id="modal-close">确定</button>
+        </div>
+    </div>
+
+    <script>
+        // 明暗模式切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // 检查本地存储的主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 弹窗功能
+        const modal = document.getElementById('modal');
+        const modalText = document.getElementById('modal-text');
+        const modalClose = document.getElementById('modal-close');
+        
+        // 微信链接点击事件
+        document.getElementById('weixin-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            modalText.textContent = '暂无awa';
+            modal.style.display = 'flex';
+        });
+        
+        // 微博链接点击事件
+        document.getElementById('weibo-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            modalText.textContent = '暂无awa';
+            modal.style.display = 'flex';
+        });
+        
+        // 邮箱链接点击事件
+        document.getElementById('email-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            modalText.textContent = '暂无awa';
+            modal.style.display = 'flex';
+        });
+        
+        // 关闭弹窗
+        modalClose.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        // 点击弹窗背景关闭
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
