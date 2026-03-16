@@ -18,7 +18,7 @@
             font-size: 2.5em;
             border-bottom: 3px solid #eee;
             padding-bottom: 0.3em;
-            margin-bottom: 1em;
+            margin-bottom: 0.3em;
         }
 
         .content {
@@ -32,61 +32,102 @@
 <body>
     <h1>六一小站</h1>
     
+    <!-- 小学毕业计数器 - 标题正下方，无背景，实时显示小数天数 -->
+    <div id="graduationCounter" style="margin: 0 0 20px 0; padding: 0; font-size: 1.1em; color: #333; line-height: 1.4;">
+        ⏳ <span id="graduationDays">计算中...</span>
+    </div>
+    
     <div class="content">
-        <h2>更新日志<h2>
+        <h2>更新日志</h2>
         <p>2025年3月15日 晴</p>
         <p>这是我的神神秘秘网站，因为是静态网站所以不能知道你是谁</p>
-            <p>2026年3月16日 晴</p>
-            <p>当时只道是寻常，小学毕业第257天，回来看看，更新李默养鸡场</p>
-    <div class="content">
-        <a href="https://chat.deepseek.com/" target="top">deepseek</a>
-        <a href="https://www.bilibili.com/" target="top">bilibili</a>
-        <a href="https://img.xwyue.com/i/2025/03/23/67dfa730cd82b.gif" target="top">老头</a>
-        <a href="https://www.cntodesk.com/windows/" target="top">远控软件</a>
-<div id="bing-search" style="margin-top: 20px;">
-    <input type="text" id="bingKeyword" placeholder="输入关键词进行搜索" style="padding: 8px; width: 70%;">
-    <button id="startSearch" style="padding: 8px 15px; background: #0066cc; color: white; border: none; cursor: pointer;">搜索</button>
-    <div id="countdownSection" style="display: none; margin-top: 10px;">
-        <p>将在 <span id="countdown">5</span> 秒后跳转到Bing搜索</p>
-        <button id="stopSearch" style="padding: 5px 10px; background: #cc0000; color: white; border: none; cursor: pointer; margin-top: 5px;">停止跳转</button>
+        <p>2026年3月16日 晴</p>
+        <p>当时只道是寻常，小学毕业第257天，回来看看，更新李默养鸡场</p>
     </div>
-</div>
 
-<script>
-    document.getElementById('startSearch').addEventListener('click', function() {
-        var keyword = document.getElementById('bingKeyword').value.trim();
-        if (!keyword) {
-            alert('请输入搜索关键词');
-            return;
-        }
-        
-        var countdownSection = document.getElementById('countdownSection');
-        var countdownDisplay = document.getElementById('countdown');
-        countdownSection.style.display = 'block';
-        
-        var secondsLeft = 5;
-        countdownDisplay.textContent = secondsLeft;
-        
-        var countdownTimer = setInterval(function() {
-            secondsLeft--;
+    <div class="content">
+        <a href="https://chat.deepseek.com/" target="_blank">deepseek</a>
+        <a href="https://www.bilibili.com/" target="_blank">bilibili</a>
+        <a href="https://img.xwyue.com/i/2025/03/23/67dfa730cd82b.gif" target="_blank">老头</a>
+        <a href="https://www.cntodesk.com/windows/" target="_blank">远控软件</a>
+
+        <div id="bing-search" style="margin-top: 20px;">
+            <input type="text" id="bingKeyword" placeholder="输入关键词进行搜索" style="padding: 8px; width: 70%;">
+            <button id="startSearch" style="padding: 8px 15px; background: #0066cc; color: white; border: none; cursor: pointer;">搜索</button>
+            <div id="countdownSection" style="display: none; margin-top: 10px;">
+                <p>将在 <span id="countdown">5</span> 秒后跳转到Bing搜索</p>
+                <button id="stopSearch" style="padding: 5px 10px; background: #cc0000; color: white; border: none; cursor: pointer; margin-top: 5px;">停止跳转</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 小学毕业天数计数器脚本 —— 实时显示小数天数 (每秒更新)
+        (function() {
+            "use strict";
+
+            // 设置毕业日期为 2025年7月2日 (月份从0开始, 6表示七月)
+            const graduation = new Date(2025, 6, 2, 0, 0, 0);  // 2025-07-02 00:00:00 本地时间
+
+            const displaySpan = document.getElementById('graduationDays');
+
+            // 计算从毕业到现在的天数（精确到毫秒，返回浮点数）
+            function getPastDaysPrecise(now, target) {
+                const diffMs = now - target;  // 毫秒差
+                if (diffMs < 0) return 0;     // 如果还没到毕业日（理论上不会）
+                return diffMs / (1000 * 60 * 60 * 24);  // 天数，包含小数
+            }
+
+            function updateCounter() {
+                const now = new Date();
+                const daysPassed = getPastDaysPrecise(now, graduation);
+                // 保留三位小数显示，例如 257.596 天
+                displaySpan.textContent = `小学毕业第 ${daysPassed.toFixed(3)} 天`;
+            }
+
+            // 立即执行一次
+            updateCounter();
+
+            // 每秒更新一次，实现实时变化的小数天数
+            setInterval(updateCounter, 1000);
+        })();
+
+        // 原有的搜索脚本（保持不变）
+        document.getElementById('startSearch').addEventListener('click', function() {
+            var keyword = document.getElementById('bingKeyword').value.trim();
+            if (!keyword) {
+                alert('请输入搜索关键词');
+                return;
+            }
+            
+            var countdownSection = document.getElementById('countdownSection');
+            var countdownDisplay = document.getElementById('countdown');
+            countdownSection.style.display = 'block';
+            
+            var secondsLeft = 5;
             countdownDisplay.textContent = secondsLeft;
             
-            if (secondsLeft <= 0) {
+            var countdownTimer = setInterval(function() {
+                secondsLeft--;
+                countdownDisplay.textContent = secondsLeft;
+                
+                if (secondsLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    window.location.href = 'https://cn.bing.com/search?q=' + encodeURIComponent(keyword);
+                }
+            }, 1000);
+            
+            document.getElementById('stopSearch').onclick = function() {
                 clearInterval(countdownTimer);
-                window.location.href = 'https://cn.bing.com/search?q=' + encodeURIComponent(keyword);
-            }
-        }, 1000);
+                countdownSection.style.display = 'none';
+            };
+        });
         
-        document.getElementById('stopSearch').onclick = function() {
-            clearInterval(countdownTimer);
-            countdownSection.style.display = 'none';
-        };
-    });
-    
-    // 支持按回车键搜索
-    document.getElementById('bingKeyword').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            document.getElementById('startSearch').click();
-        }
-    });
-</script>
+        document.getElementById('bingKeyword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('startSearch').click();
+            }
+        });
+    </script>
+</body>
+</html>
